@@ -1,0 +1,19 @@
+owncloud:
+    image: dguenault/owncloud:latest
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+    links:
+        - ocmysql:ocmysql
+    ports:
+        - "80:80"
+        - "443:443"
+    hostname: owncloud
+
+ocmysql:
+    image: mysql:latest
+    volumes:
+        - /etc/localtime:/etc/localtime:ro
+    hostname: ocmysql
+    env_file: ./mysql.env
+
+

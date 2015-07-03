@@ -1,0 +1,29 @@
+BROWSER=/usr/bin/google-chrome
+DOCKER=/usr/bin/docker
+DOCKERENTER=/usr/local/bin/docker-enter
+IMAGE=$(REPO)/$(NAME):$(TAG)
+REPO=dguenault
+SHELL=/bin/bash
+
+clean:
+	echo "Remove container $(RUNNAME)"
+	- @$(DOCKER) rm $(RUNNAME) > /dev/null 2>&1
+	echo "Remove image $(IMAGE)"
+	- @$(DOCKER) rmi $(IMAGE) > /dev/null 2>&1
+	echo "Remove orphaned images"
+	- @$(DOCKER) rmi $$($(DOCKER) images |grep "none" |awk '{print $$3'})
+
+build: 
+	$(DOCKER) build --force-rm -t $(IMAGE) .
+
+interactive:
+	$(DOCKER) run -ti --rm -v /etc/localtime:/etc/localtime:ro --name $(RUNNAME) $(IMAGE) $(SHELL)
+
+kill:
+	$(DOCKER) kill $(RUNNAME) 
+
+rm:
+	$(DOCKER) rm $(RUNNAME)
+
+.PHONY: clean build interactive rm
+
